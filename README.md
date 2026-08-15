@@ -5,9 +5,9 @@ Small public deep-link pages for [Waxlight Launcher](https://github.com/AmadoMue
 ## Supported links
 
 ```text
-https://waxlight.by/mod/optimum
+https://waxlight.by/mod/mod-slug
 ->
-waxlight://mod/optimum
+waxlight://mod/mod-slug
 ```
 
 The page renders ModDB information when available, then tries the launcher once. Its manual button and download links always remain available.
