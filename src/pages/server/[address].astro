@@ -1,0 +1,226 @@
+---
+import { Play, Server } from "@lucide/astro";
+import Brand from "../../components/Brand.astro";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { normalizeServerAddress, serverDeepLink } from "../../lib/deep-links";
+import { getDownloads } from "../../lib/github";
+import { getServerMetadata } from "../../lib/servers";
+
+let rawAddress = Astro.params.address || "";
+try {
+  rawAddress = decodeURIComponent(rawAddress);
+} catch {
+  rawAddress = "";
+}
+const address = normalizeServerAddress(rawAddress);
+const [metadata, downloads] = address
+  ? await Promise.all([getServerMetadata(address), getDownloads()])
+  : [undefined, await getDownloads()];
+const deepLink = address ? serverDeepLink(address) : "waxlight://";
+const name = metadata?.name || "Vintage Story Server";
+const title = address ? `${name} - Open in Waxlight` : "Invalid Waxlight Link - Open in Waxlight";
+const description = address
+  ? metadata
+    ? `Join ${name} using Waxlight Launcher.${metadata.players ? ` ${metadata.players} players online.` : ""}`
+    : `Open Vintage Story server ${address} using Waxlight Launcher.`
+  : "This Waxlight Link is invalid.";
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  canonicalPath={address ? `/server/${encodeURIComponent(address)}` : "/"}
+>
+  <main>
+    <header><Brand compact /></header>
+    {
+      address ? (
+        <>
+          <section class="server-card">
+            <div class="heading">
+              <div class="artwork" aria-hidden="true">
+                <Server size={34} />
+              </div>
+              <div>
+                <p class="eyebrow">VINTAGE STORY SERVER</p>
+                <h1>{name}</h1>
+                <p class="address">{address}</p>
+              </div>
+            </div>
+            {metadata && (
+              <>
+                <div class="meta">
+                  <span>{metadata.players} players</span>
+                  <span>{metadata.modCount} mods</span>
+                  {metadata.requiresWhitelist && <span>Whitelist</span>}
+                  {metadata.passwordProtected && <span>Password protected</span>}
+                  {!metadata.joinable && <span>Unavailable</span>}
+                </div>
+                {metadata.description && <p class="description">{metadata.description}</p>}
+              </>
+            )}
+            <div class="action">
+              <a class="open" href={deepLink} data-deep-link>
+                <Play size={18} fill="currentColor" aria-hidden="true" /> Open in Waxlight
+              </a>
+            </div>
+            <p class="hint" aria-live="polite" data-open-status>
+              Opens in your installed Waxlight Launcher.
+            </p>
+          </section>
+          <p class="download-note">
+            Don't have Waxlight? <a href={downloads.latestUrl}>Download the launcher</a>.
+          </p>
+        </>
+      ) : (
+        <section class="invalid">
+          <p class="eyebrow">INVALID LINK</p>
+          <h1>This Waxlight Link is invalid.</h1>
+          <p>Server links use a hostname or IPv4 address, optionally followed by a port.</p>
+          <a class="open" href="/">
+            Go to Waxlight Links
+          </a>
+        </section>
+      )
+    }
+  </main>
+  <script>
+    const status = document.querySelector("[data-open-status]");
+    const deepLink = document.querySelector("[data-deep-link]")?.getAttribute("href");
+    const noOpen = new URLSearchParams(window.location.search).get("noopen") === "1";
+    if (noOpen && status) status.textContent = "Automatic opening is disabled for this link.";
+    else if (deepLink) {
+      window.setTimeout(() => {
+        window.location.href = deepLink;
+        window.setTimeout(() => {
+          if (status) status.textContent = "Use the button above if Waxlight did not open.";
+        }, 1_500);
+      }, 180);
+    }
+  </script>
+</BaseLayout>
+
+<style>
+  main {
+    width: min(100% - 40px, 700px);
+    margin: 0 auto;
+    padding: 30px 0 72px;
+  }
+  .server-card,
+  .invalid {
+    margin-top: 64px;
+    padding: clamp(24px, 5vw, 36px);
+    border: 1px solid #302d31;
+    border-radius: 14px;
+    background: #151417;
+    box-shadow: 0 18px 44px #0003;
+  }
+  .heading {
+    display: grid;
+    grid-template-columns: 72px minmax(0, 1fr);
+    gap: 20px;
+    align-items: center;
+  }
+  .artwork {
+    display: grid;
+    width: 72px;
+    height: 72px;
+    place-items: center;
+    border: 1px solid #604326;
+    border-radius: 12px;
+    color: #ffe2ae;
+    background: radial-gradient(circle at 35% 30%, #9a5b2f, #2b211b);
+  }
+  .eyebrow {
+    margin: 0;
+    color: #e5a84b;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.22em;
+  }
+  h1 {
+    margin: 5px 0 2px;
+    overflow-wrap: anywhere;
+    font-family: var(--font-display);
+    font-size: clamp(34px, 5vw, 48px);
+    font-weight: 600;
+    line-height: 1;
+  }
+  .address,
+  .hint,
+  .download-note {
+    margin: 0;
+    color: #96908a;
+    font-size: 12px;
+    overflow-wrap: anywhere;
+  }
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 22px 0 0;
+    color: #a8a09a;
+    font-size: 12px;
+  }
+  .meta span {
+    padding: 4px 8px;
+    border: 1px solid #383438;
+    border-radius: 999px;
+    background: #242225;
+  }
+  .description {
+    margin: 20px 0 0;
+    color: #c5bdb5;
+    line-height: 1.6;
+    white-space: pre-line;
+  }
+  .action {
+    display: flex;
+    margin-top: 26px;
+  }
+  .open {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 46px;
+    padding: 0 18px;
+    border-radius: 9px;
+    color: #20150b;
+    background: linear-gradient(135deg, #efb557, #cf8732);
+    box-shadow: 0 8px 22px #c9802522;
+    font-size: 14px;
+    font-weight: 800;
+    text-decoration: none;
+  }
+  .open:hover {
+    filter: brightness(1.08);
+    transform: translateY(-1px);
+  }
+  .hint {
+    margin-top: 13px;
+  }
+  .download-note {
+    margin-top: 18px;
+    text-align: center;
+  }
+  .download-note a {
+    color: #d9a653;
+    font-weight: 700;
+  }
+  .invalid > p:not(.eyebrow) {
+    color: #aaa49e;
+    line-height: 1.6;
+  }
+  .invalid .open {
+    margin-top: 12px;
+  }
+  @media (max-width: 600px) {
+    .server-card {
+      margin-top: 46px;
+    }
+    .open {
+      width: 100%;
+    }
+  }
+</style>

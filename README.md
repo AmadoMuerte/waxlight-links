@@ -8,9 +8,15 @@ Small public deep-link pages for [Waxlight Launcher](https://github.com/AmadoMue
 https://waxlight.by/mod/mod-slug
 ->
 waxlight://mod/mod-slug
+
+https://waxlight.by/server/server-address
+->
+waxlight://server/server-address
 ```
 
-The page renders ModDB information when available, then tries the launcher once. Its manual button and download links always remain available.
+ModDB and public-server metadata are optional. Pages try the launcher once, while the manual button and download links always remain available.
+
+Server addresses are the identifier: links are not stored in a database and do not map through server IDs. A server link only shows the server in the launcher; the user must explicitly confirm Play.
 
 ## Development
 
@@ -60,8 +66,11 @@ Waxlight Links only opens a page. Waxlight Launcher must register and handle:
 
 ```text
 waxlight://mod/{modSlug}
+waxlight://server/{serverAddress}
 ```
 
 The launcher must bring an existing process forward or start one, validate and resolve the ModDB slug, open its existing Mod Details page, and use its normal ModDB flow. It must let the user choose an instance and explicitly install the mod.
 
-**A deep link must never install a mod automatically.**
+For a server link, the launcher must validate the address, open Servers and show its Server Details page. It must never launch the game automatically: the user explicitly selects Play and then an instance.
+
+**A deep link must never install a mod or auto-join a server.**

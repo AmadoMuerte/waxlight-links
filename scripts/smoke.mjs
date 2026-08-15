@@ -30,6 +30,19 @@ try {
   if (!page.ok || !html.includes("waxlight://mod/optimum") || !html.includes("Open in Waxlight")) {
     throw new Error("mod fallback page failed");
   }
+
+  const serverPage = await fetch(
+    `http://127.0.0.1:${port}/server/play.example.com%3A42420?noopen=1`,
+  );
+  const serverHtml = await serverPage.text();
+  if (
+    !serverPage.ok ||
+    !serverHtml.includes("play.example.com:42420") ||
+    !serverHtml.includes("waxlight://server/play.example.com%3A42420") ||
+    !serverHtml.includes("Open in Waxlight")
+  ) {
+    throw new Error("server fallback page failed");
+  }
 } finally {
   child.kill("SIGTERM");
 }

@@ -10,14 +10,18 @@ const downloads = await getDownloads();
 
 <BaseLayout
   title="Waxlight Links"
-  description="Open Vintage Story mods directly in Waxlight Launcher."
+  description="Open Vintage Story mods and servers directly in Waxlight Launcher."
 >
   <main>
     <Brand />
     <section class="hero">
       <p class="eyebrow">SHAREABLE DEEP LINKS</p>
-      <h1>Open Vintage Story mods in Waxlight.</h1>
+      <h1>Open Vintage Story mods and servers in Waxlight.</h1>
       <p>Waxlight Links are safe, public links that open content inside Waxlight Launcher.</p>
+      <div class="examples">
+        <code>https://waxlight.by/mod/optimum</code>
+        <code>https://waxlight.by/server/play.example.com:42420</code>
+      </div>
       <div class="actions">
         <a class="primary" href={downloads.latestUrl}
           ><Download size={18} aria-hidden="true" /> Download Waxlight</a
@@ -72,6 +76,21 @@ const downloads = await getDownloads();
     gap: 10px;
     margin-top: 29px;
     justify-content: center;
+  }
+  .examples {
+    display: grid;
+    gap: 8px;
+    margin-top: 24px;
+    color: #c49c63;
+    font-size: 12px;
+    text-align: left;
+  }
+  .examples code {
+    overflow-wrap: anywhere;
+    padding: 9px 12px;
+    border: 1px solid #393539;
+    border-radius: 7px;
+    background: #1b191c;
   }
   .actions a {
     display: inline-flex;
