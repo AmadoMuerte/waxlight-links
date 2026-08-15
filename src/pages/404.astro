@@ -13,7 +13,8 @@ import { config } from "../lib/config";
     <Brand />
     <section>
       <p>404</p>
-      <h1>This Waxlight Link could not be found.</h1>
+      <h1>Link not found</h1>
+      <p class="message">Check the address, or return to Waxlight Links.</p>
       <a href="/">Go to Waxlight Links <ArrowRight size={17} aria-hidden="true" /></a>
       <a href={`https://github.com/${config.githubRepository}`} class="secondary"
         >Waxlight on GitHub <ExternalLink size={15} aria-hidden="true" /></a
@@ -29,7 +30,13 @@ import { config } from "../lib/config";
     padding: 34px 0;
   }
   section {
-    margin-top: 120px;
+    max-width: 520px;
+    margin: 88px auto 0;
+    padding: clamp(24px, 5vw, 36px);
+    border: 1px solid #302d31;
+    border-radius: 14px;
+    background: #151417;
+    box-shadow: 0 18px 44px #0003;
   }
   p {
     color: #e5a84b;
@@ -38,11 +45,19 @@ import { config } from "../lib/config";
     letter-spacing: 0.2em;
   }
   h1 {
-    max-width: 560px;
+    margin: 7px 0 0;
     font-family: var(--font-display);
-    font-size: clamp(40px, 7vw, 62px);
+    font-size: clamp(34px, 5vw, 46px);
     font-weight: 600;
     line-height: 1;
+  }
+  .message {
+    margin: 14px 0 6px;
+    color: #aaa49e;
+    font-size: 14px;
+    font-weight: 400;
+    letter-spacing: normal;
+    line-height: 1.55;
   }
   a {
     display: inline-flex;
