@@ -1,7 +1,6 @@
 ---
-import { ExternalLink, PackageOpen, Play, ShieldCheck } from "@lucide/astro";
+import { ExternalLink, PackageOpen, Play } from "@lucide/astro";
 import Brand from "../../components/Brand.astro";
-import DownloadLinks from "../../components/DownloadLinks.astro";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { modDeepLink, isValidModId } from "../../lib/deep-links";
 import { getDownloads } from "../../lib/github";
@@ -35,20 +34,19 @@ const description = valid
       valid ? (
         <>
           <section class="mod-card">
-            <div class="artwork" aria-hidden="true">
-              {metadata?.imageUrl ? (
-                <img src={metadata.imageUrl} alt="" />
-              ) : (
-                <PackageOpen size={46} />
-              )}
-            </div>
-            <div class="content">
-              <p class="eyebrow">VINTAGE STORY MODDB</p>
-              <h1>{name}</h1>
-              {metadata?.author && <p class="author">by {metadata.author}</p>}
-              <p class="summary">
-                {metadata?.summary || `Open “${id}” in Waxlight to view this mod.`}
-              </p>
+            <div class="mod-heading">
+              <div class="artwork" aria-hidden="true">
+                {metadata?.imageUrl ? (
+                  <img src={metadata.imageUrl} alt="" />
+                ) : (
+                  <PackageOpen size={34} />
+                )}
+              </div>
+              <div>
+                <p class="eyebrow">VINTAGE STORY MODDB</p>
+                <h1>{name}</h1>
+                {metadata?.author && <p class="author">by {metadata.author}</p>}
+              </div>
               <div class="meta">
                 <span>Mod ID: {id}</span>
                 {metadata?.latestVersion && <span>Latest: {metadata.latestVersion}</span>}
@@ -58,19 +56,18 @@ const description = valid
               <a class="open" href={deepLink} data-deep-link>
                 <Play size={18} fill="currentColor" aria-hidden="true" /> Open in Waxlight
               </a>
-              <p aria-live="polite" data-open-status>
-                Trying to open Waxlight...
-              </p>
+              {metadata && (
+                <a class="moddb" href={metadata.moddbUrl}>
+                  View on Vintage Story ModDB <ExternalLink size={14} aria-hidden="true" />
+                </a>
+              )}
             </div>
-            {metadata && (
-              <a class="moddb" href={metadata.moddbUrl}>
-                View on Vintage Story ModDB <ExternalLink size={14} aria-hidden="true" />
-              </a>
-            )}
+            <p class="hint" aria-live="polite" data-open-status>
+              Opens in your installed Waxlight Launcher.
+            </p>
           </section>
-          <p class="fallback">
-            <ShieldCheck size={16} aria-hidden="true" /> Waxlight didn't open? Use the button above
-            or download the launcher.
+          <p class="download-note">
+            Don't have Waxlight? <a href={downloads.latestUrl}>Download the launcher</a>.
           </p>
         </>
       ) : (
@@ -86,7 +83,6 @@ const description = valid
         </section>
       )
     }
-    <DownloadLinks {...downloads} />
   </main>
   <script>
     const status = document.querySelector("[data-open-status]");
@@ -107,30 +103,33 @@ const description = valid
 
 <style>
   main {
-    width: min(100% - 40px, 760px);
+    width: min(100% - 40px, 700px);
     margin: 0 auto;
-    padding: 34px 0 72px;
+    padding: 30px 0 72px;
   }
   .mod-card,
   .invalid {
+    margin-top: 64px;
+    padding: clamp(24px, 5vw, 36px);
+    border: 1px solid #302d31;
+    border-radius: 14px;
+    background: #151417;
+    box-shadow: 0 18px 44px #0003;
+  }
+  .mod-heading {
     display: grid;
-    grid-template-columns: auto minmax(0, 1fr);
-    gap: 24px;
-    margin-top: 70px;
-    padding: clamp(24px, 5vw, 42px);
-    border: 1px solid #2b292c;
-    border-radius: 16px;
-    background: linear-gradient(145deg, #1a191c, #141416);
-    box-shadow: 0 20px 48px #0004;
+    grid-template-columns: 72px minmax(0, 1fr);
+    gap: 20px;
+    align-items: center;
   }
   .artwork {
     display: grid;
-    width: 92px;
-    height: 92px;
+    width: 72px;
+    height: 72px;
     place-items: center;
     overflow: hidden;
     border: 1px solid #604326;
-    border-radius: 16px;
+    border-radius: 12px;
     color: #ffe2ae;
     background: radial-gradient(circle at 35% 30%, #9a5b2f, #2b211b);
   }
@@ -138,9 +137,6 @@ const description = valid
     width: 100%;
     height: 100%;
     object-fit: cover;
-  }
-  .content {
-    min-width: 0;
   }
   .eyebrow {
     margin: 0;
@@ -150,10 +146,10 @@ const description = valid
     letter-spacing: 0.22em;
   }
   h1 {
-    margin: 8px 0 2px;
+    margin: 5px 0 2px;
     overflow-wrap: anywhere;
     font-family: var(--font-display);
-    font-size: clamp(36px, 6vw, 52px);
+    font-size: clamp(34px, 5vw, 48px);
     font-weight: 600;
     line-height: 1;
   }
@@ -162,18 +158,12 @@ const description = valid
     color: #b8b0a9;
     font-size: 14px;
   }
-  .summary {
-    max-width: 590px;
-    margin: 22px 0 0;
-    color: #aaa49e;
-    font-size: 15px;
-    line-height: 1.65;
-  }
   .meta {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
-    margin-top: 17px;
+    grid-column: 1 / -1;
+    margin: 22px 0 0;
     color: #a8a09a;
     font-size: 12px;
   }
@@ -184,11 +174,10 @@ const description = valid
     background: #242225;
   }
   .action {
-    grid-column: 1 / -1;
     display: flex;
     align-items: center;
     gap: 14px;
-    padding-top: 5px;
+    margin-top: 26px;
   }
   .open {
     display: inline-flex;
@@ -209,13 +198,13 @@ const description = valid
     filter: brightness(1.08);
     transform: translateY(-1px);
   }
-  .action p {
+  .hint,
+  .download-note {
     margin: 0;
     color: #96908a;
     font-size: 12px;
   }
   .moddb {
-    grid-column: 1 / -1;
     display: inline-flex;
     align-items: center;
     gap: 5px;
@@ -224,19 +213,16 @@ const description = valid
     font-size: 13px;
     font-weight: 700;
   }
-  .fallback {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 7px;
-    margin: 17px 0 0;
-    color: #9a948e;
-    font-size: 13px;
+  .hint {
+    margin-top: 13px;
+  }
+  .download-note {
+    margin-top: 18px;
     text-align: center;
   }
-  .fallback svg {
-    flex: 0 0 auto;
-    color: #e5a84b;
+  .download-note a {
+    color: #d9a653;
+    font-weight: 700;
   }
   .invalid {
     display: block;
@@ -253,24 +239,18 @@ const description = valid
   }
   @media (max-width: 600px) {
     .mod-card {
-      grid-template-columns: 1fr;
-      gap: 18px;
       margin-top: 46px;
-    }
-    .artwork {
-      width: 76px;
-      height: 76px;
     }
     .action {
       align-items: stretch;
       flex-direction: column;
       gap: 10px;
     }
-    .action p {
-      text-align: center;
-    }
     .open {
       width: 100%;
+    }
+    .moddb {
+      justify-content: center;
     }
   }
 </style>
