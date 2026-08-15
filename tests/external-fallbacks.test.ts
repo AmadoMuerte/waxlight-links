@@ -11,6 +11,27 @@ describe("external API fallbacks", () => {
     await expect(getModMetadata("network-test-mod")).resolves.toBeUndefined();
   });
 
+  it("converts ModDB HTML descriptions to text", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue(
+        new Response(
+          JSON.stringify({
+            statuscode: "200",
+            mod: {
+              name: "Test",
+              text: "<p>Useful <strong>description</strong> &amp; details.</p>",
+            },
+          }),
+        ),
+      ),
+    );
+
+    await expect(getModMetadata("test-mod")).resolves.toMatchObject({
+      summary: "Useful description & details.",
+    });
+  });
+
   it("falls back to the official release page", async () => {
     vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new Error("offline")));
     const downloads = await getDownloads();

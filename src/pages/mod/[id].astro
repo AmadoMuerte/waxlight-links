@@ -15,7 +15,8 @@ const [metadata, downloads] = valid
   ? await Promise.all([getModMetadata(id), getDownloads()])
   : [undefined, await getDownloads()];
 const name = metadata?.name || id;
-const deepLink = valid ? modDeepLink(id) : "waxlight://";
+const deepLinkId = isValidModId(metadata?.id) ? metadata.id : id;
+const deepLink = valid ? modDeepLink(deepLinkId) : "waxlight://";
 const title = valid ? `${name} - Open in Waxlight` : "Invalid Waxlight Link - Open in Waxlight";
 const description = valid
   ? `Install ${name} for Vintage Story using Waxlight Launcher.`

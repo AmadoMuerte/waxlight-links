@@ -39,7 +39,14 @@ function safeHttpsUrl(value: unknown) {
 }
 
 function text(value: unknown, maxLength: number) {
-  return typeof value === "string" ? value.replace(/\s+/g, " ").trim().slice(0, maxLength) : "";
+  return typeof value === "string"
+    ? value
+        .replace(/<[^>]*>/g, " ")
+        .replace(/&amp;/g, "&")
+        .replace(/\s+/g, " ")
+        .trim()
+        .slice(0, maxLength)
+    : "";
 }
 
 async function fetchMetadata(id: string): Promise<ModMetadata | undefined> {
