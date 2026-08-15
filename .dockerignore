@@ -1,0 +1,11 @@
+.git/
+.github/
+.astro/
+dist/
+node_modules/
+.env
+.env.*
+!.env.example
+docs/
+tests/
+scripts/

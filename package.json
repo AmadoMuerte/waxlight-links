@@ -1,0 +1,40 @@
+{
+  "name": "waxlight-links",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "npm@11.19.0",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "start": "node ./dist/server/entry.mjs",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint": "eslint .",
+    "check": "astro check",
+    "test": "vitest run && npm run build && node scripts/smoke.mjs"
+  },
+  "dependencies": {
+    "@astrojs/node": "11.1.2",
+    "@tailwindcss/vite": "4.3.3",
+    "astro": "7.2.2",
+    "@lucide/astro": "1.31.0",
+    "tailwindcss": "4.3.3"
+  },
+  "devDependencies": {
+    "@astrojs/check": "0.9.6",
+    "@types/node": "24.10.1",
+    "@typescript-eslint/parser": "8.67.0",
+    "@eslint/js": "10.0.1",
+    "eslint": "10.8.1",
+    "eslint-plugin-astro": "3.1.0",
+    "globals": "17.11.0",
+    "prettier": "3.9.6",
+    "prettier-plugin-astro": "0.14.1",
+    "typescript": "5.9.3",
+    "vitest": "4.1.10"
+  }
+}

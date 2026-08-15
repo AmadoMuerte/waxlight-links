@@ -1,0 +1,104 @@
+---
+import { BookOpen, SquareCode, Download } from "@lucide/astro";
+import Brand from "../components/Brand.astro";
+import DownloadLinks from "../components/DownloadLinks.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { getDownloads } from "../lib/github";
+
+const downloads = await getDownloads();
+---
+
+<BaseLayout
+  title="Waxlight Links"
+  description="Open Vintage Story mods directly in Waxlight Launcher."
+>
+  <main>
+    <Brand />
+    <section class="hero">
+      <p class="eyebrow">SHAREABLE DEEP LINKS</p>
+      <h1>Open Vintage Story mods in Waxlight.</h1>
+      <p>Waxlight Links are safe, public links that open content inside Waxlight Launcher.</p>
+      <div class="actions">
+        <a class="primary" href={downloads.latestUrl}
+          ><Download size={18} aria-hidden="true" /> Download Waxlight</a
+        >
+        <a href="https://github.com/AmadoMuerte/Waxlight-launcher"
+          ><SquareCode size={18} aria-hidden="true" /> GitHub</a
+        >
+        <a href="https://amadomuerte.github.io/waxlight-wiki/en/"
+          ><BookOpen size={18} aria-hidden="true" /> Documentation</a
+        >
+      </div>
+    </section>
+    <DownloadLinks {...downloads} />
+  </main>
+</BaseLayout>
+
+<style>
+  main {
+    width: min(100% - 40px, 850px);
+    margin: 0 auto;
+    padding: 34px 0 70px;
+    text-align: center;
+  }
+  .hero {
+    max-width: 680px;
+    margin: 78px auto 0;
+  }
+  .eyebrow {
+    color: #e5a84b;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.23em;
+  }
+  h1 {
+    margin: 13px auto 19px;
+    font-family: var(--font-display);
+    font-size: clamp(40px, 6vw, 56px);
+    font-weight: 600;
+    line-height: 0.97;
+  }
+  .hero > p:last-of-type {
+    max-width: 540px;
+    margin-right: auto;
+    margin-left: auto;
+    color: #aaa49e;
+    font-size: 17px;
+    line-height: 1.65;
+  }
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 29px;
+    justify-content: center;
+  }
+  .actions a {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 43px;
+    padding: 0 15px;
+    border: 1px solid #393539;
+    border-radius: 9px;
+    color: #ded8d1;
+    background: #1b191c;
+    font-size: 13px;
+    font-weight: 800;
+    text-decoration: none;
+  }
+  .actions a:hover {
+    border-color: #5c5146;
+    background: #262226;
+  }
+  .actions .primary {
+    border: 0;
+    color: #20150b;
+    background: linear-gradient(135deg, #efb557, #cf8732);
+  }
+  @media (max-width: 560px) {
+    .hero {
+      margin-top: 66px;
+    }
+  }
+</style>

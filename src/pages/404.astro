@@ -1,0 +1,63 @@
+---
+import { ArrowRight, ExternalLink } from "@lucide/astro";
+import Brand from "../components/Brand.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { config } from "../lib/config";
+---
+
+<BaseLayout
+  title="Link not found | Waxlight Links"
+  description="This Waxlight Link could not be found."
+>
+  <main>
+    <Brand />
+    <section>
+      <p>404</p>
+      <h1>This Waxlight Link could not be found.</h1>
+      <a href="/">Go to Waxlight Links <ArrowRight size={17} aria-hidden="true" /></a>
+      <a href={`https://github.com/${config.githubRepository}`} class="secondary"
+        >Waxlight on GitHub <ExternalLink size={15} aria-hidden="true" /></a
+      >
+    </section>
+  </main>
+</BaseLayout>
+
+<style>
+  main {
+    width: min(100% - 40px, 850px);
+    margin: 0 auto;
+    padding: 34px 0;
+  }
+  section {
+    margin-top: 120px;
+  }
+  p {
+    color: #e5a84b;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.2em;
+  }
+  h1 {
+    max-width: 560px;
+    font-family: var(--font-display);
+    font-size: clamp(40px, 7vw, 62px);
+    font-weight: 600;
+    line-height: 1;
+  }
+  a {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    margin: 12px 8px 0 0;
+    padding: 12px 16px;
+    border-radius: 9px;
+    color: #20150b;
+    background: #e5a84b;
+    font-weight: 800;
+    text-decoration: none;
+  }
+  .secondary {
+    color: #ded8d1;
+    background: #242225;
+  }
+</style>

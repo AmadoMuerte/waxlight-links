@@ -1,0 +1,275 @@
+---
+import { ExternalLink, PackageOpen, Play, ShieldCheck } from "@lucide/astro";
+import Brand from "../../components/Brand.astro";
+import DownloadLinks from "../../components/DownloadLinks.astro";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { modDeepLink, isValidModId } from "../../lib/deep-links";
+import { getDownloads } from "../../lib/github";
+import { getModMetadata } from "../../lib/moddb";
+
+const id = Astro.params.id || "";
+const valid = isValidModId(id);
+if (!valid) Astro.response.status = 404;
+
+const [metadata, downloads] = valid
+  ? await Promise.all([getModMetadata(id), getDownloads()])
+  : [undefined, await getDownloads()];
+const name = metadata?.name || id;
+const deepLink = valid ? modDeepLink(id) : "waxlight://";
+const title = valid ? `${name} - Open in Waxlight` : "Invalid Waxlight Link - Open in Waxlight";
+const description = valid
+  ? `Install ${name} for Vintage Story using Waxlight Launcher.`
+  : "This Waxlight Link is invalid.";
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  canonicalPath={valid ? `/mod/${encodeURIComponent(id)}` : "/"}
+  image={metadata?.imageUrl}
+>
+  <main>
+    <header><Brand compact /></header>
+    {
+      valid ? (
+        <>
+          <section class="mod-card">
+            <div class="artwork" aria-hidden="true">
+              {metadata?.imageUrl ? (
+                <img src={metadata.imageUrl} alt="" />
+              ) : (
+                <PackageOpen size={46} />
+              )}
+            </div>
+            <div class="content">
+              <p class="eyebrow">VINTAGE STORY MODDB</p>
+              <h1>{name}</h1>
+              {metadata?.author && <p class="author">by {metadata.author}</p>}
+              <p class="summary">
+                {metadata?.summary || `Open “${id}” in Waxlight to view this mod.`}
+              </p>
+              <div class="meta">
+                <span>Mod ID: {id}</span>
+                {metadata?.latestVersion && <span>Latest: {metadata.latestVersion}</span>}
+              </div>
+            </div>
+            <div class="action">
+              <a class="open" href={deepLink} data-deep-link>
+                <Play size={18} fill="currentColor" aria-hidden="true" /> Open in Waxlight
+              </a>
+              <p aria-live="polite" data-open-status>
+                Trying to open Waxlight...
+              </p>
+            </div>
+            {metadata && (
+              <a class="moddb" href={metadata.moddbUrl}>
+                View on Vintage Story ModDB <ExternalLink size={14} aria-hidden="true" />
+              </a>
+            )}
+          </section>
+          <p class="fallback">
+            <ShieldCheck size={16} aria-hidden="true" /> Waxlight didn't open? Use the button above
+            or download the launcher.
+          </p>
+        </>
+      ) : (
+        <section class="invalid">
+          <p class="eyebrow">INVALID LINK</p>
+          <h1>This Waxlight Link is invalid.</h1>
+          <p>
+            Mod links use a lowercase ModDB slug, such as <code>/mod/optimum</code>.
+          </p>
+          <a class="open" href="/">
+            Go to Waxlight Links
+          </a>
+        </section>
+      )
+    }
+    <DownloadLinks {...downloads} />
+  </main>
+  <script>
+    const status = document.querySelector("[data-open-status]");
+    const deepLink = document.querySelector("[data-deep-link]")?.getAttribute("href");
+    const noOpen = new URLSearchParams(window.location.search).get("noopen") === "1";
+    if (noOpen && status) {
+      status.textContent = "Automatic opening is disabled for this link.";
+    } else if (deepLink) {
+      window.setTimeout(() => {
+        window.location.href = deepLink;
+        window.setTimeout(() => {
+          if (status) status.textContent = "Use the button above if Waxlight did not open.";
+        }, 1_500);
+      }, 180);
+    }
+  </script>
+</BaseLayout>
+
+<style>
+  main {
+    width: min(100% - 40px, 760px);
+    margin: 0 auto;
+    padding: 34px 0 72px;
+  }
+  .mod-card,
+  .invalid {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 24px;
+    margin-top: 70px;
+    padding: clamp(24px, 5vw, 42px);
+    border: 1px solid #2b292c;
+    border-radius: 16px;
+    background: linear-gradient(145deg, #1a191c, #141416);
+    box-shadow: 0 20px 48px #0004;
+  }
+  .artwork {
+    display: grid;
+    width: 92px;
+    height: 92px;
+    place-items: center;
+    overflow: hidden;
+    border: 1px solid #604326;
+    border-radius: 16px;
+    color: #ffe2ae;
+    background: radial-gradient(circle at 35% 30%, #9a5b2f, #2b211b);
+  }
+  .artwork img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .content {
+    min-width: 0;
+  }
+  .eyebrow {
+    margin: 0;
+    color: #e5a84b;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.22em;
+  }
+  h1 {
+    margin: 8px 0 2px;
+    overflow-wrap: anywhere;
+    font-family: var(--font-display);
+    font-size: clamp(36px, 6vw, 52px);
+    font-weight: 600;
+    line-height: 1;
+  }
+  .author {
+    margin: 0;
+    color: #b8b0a9;
+    font-size: 14px;
+  }
+  .summary {
+    max-width: 590px;
+    margin: 22px 0 0;
+    color: #aaa49e;
+    font-size: 15px;
+    line-height: 1.65;
+  }
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 17px;
+    color: #a8a09a;
+    font-size: 12px;
+  }
+  .meta span {
+    padding: 4px 8px;
+    border: 1px solid #383438;
+    border-radius: 999px;
+    background: #242225;
+  }
+  .action {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding-top: 5px;
+  }
+  .open {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 46px;
+    padding: 0 18px;
+    border-radius: 9px;
+    color: #20150b;
+    background: linear-gradient(135deg, #efb557, #cf8732);
+    box-shadow: 0 8px 22px #c9802522;
+    font-size: 14px;
+    font-weight: 800;
+    text-decoration: none;
+  }
+  .open:hover {
+    filter: brightness(1.08);
+    transform: translateY(-1px);
+  }
+  .action p {
+    margin: 0;
+    color: #96908a;
+    font-size: 12px;
+  }
+  .moddb {
+    grid-column: 1 / -1;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    width: fit-content;
+    color: #c49c63;
+    font-size: 13px;
+    font-weight: 700;
+  }
+  .fallback {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    margin: 17px 0 0;
+    color: #9a948e;
+    font-size: 13px;
+    text-align: center;
+  }
+  .fallback svg {
+    flex: 0 0 auto;
+    color: #e5a84b;
+  }
+  .invalid {
+    display: block;
+  }
+  .invalid > p:not(.eyebrow) {
+    color: #aaa49e;
+    line-height: 1.6;
+  }
+  code {
+    color: #f0d4a5;
+  }
+  .invalid .open {
+    margin-top: 12px;
+  }
+  @media (max-width: 600px) {
+    .mod-card {
+      grid-template-columns: 1fr;
+      gap: 18px;
+      margin-top: 46px;
+    }
+    .artwork {
+      width: 76px;
+      height: 76px;
+    }
+    .action {
+      align-items: stretch;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .action p {
+      text-align: center;
+    }
+    .open {
+      width: 100%;
+    }
+  }
+</style>

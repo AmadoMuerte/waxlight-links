@@ -1,0 +1,153 @@
+---
+import { ChevronDown, Download, ExternalLink, MonitorDown } from "@lucide/astro";
+import type { DownloadAsset } from "../lib/github";
+
+interface Props {
+  assets: DownloadAsset[];
+  latestUrl: string;
+}
+
+const { assets, latestUrl } = Astro.props;
+const windows = assets.find((asset) => asset.platform === "windows" && asset.primary);
+const linux = assets.find((asset) => asset.platform === "linux" && asset.primary);
+const primary = windows || linux;
+---
+
+<section class="downloads" aria-labelledby="download-heading">
+  <p class="eyebrow">GET WAXLIGHT</p>
+  <h2 id="download-heading">Don't have Waxlight?</h2>
+  <p>Download the launcher from its official GitHub releases.</p>
+  <div class="download-actions" data-downloads>
+    <a class="download-primary" href={primary?.url || latestUrl} data-platform-download>
+      <Download size={18} aria-hidden="true" />
+      <span data-platform-label>Download Waxlight</span>
+    </a>
+    {
+      assets.length > 0 && (
+        <details>
+          <summary>
+            <ChevronDown size={16} aria-hidden="true" /> Other downloads
+          </summary>
+          <div class="other-downloads">
+            {assets.map((asset) => (
+              <a href={asset.url}>
+                <MonitorDown size={15} aria-hidden="true" /> {asset.label}
+              </a>
+            ))}
+          </div>
+        </details>
+      )
+    }
+  </div>
+  <a class="release-link" href={latestUrl}>
+    View all releases <ExternalLink size={14} aria-hidden="true" />
+  </a>
+</section>
+
+<script>
+  const downloads = document.querySelector<HTMLElement>("[data-downloads]");
+  const button = downloads?.querySelector<HTMLAnchorElement>("[data-platform-download]");
+  const label = downloads?.querySelector<HTMLElement>("[data-platform-label]");
+  const platform = navigator.userAgent;
+  const target = /win/i.test(platform) ? "windows" : /linux/i.test(platform) ? "linux" : "";
+  const links = [...(downloads?.querySelectorAll<HTMLAnchorElement>(".other-downloads a") || [])];
+  const selected = links.find((link) => link.textContent?.toLowerCase().includes(target));
+  if (target && label)
+    label.textContent = `Download Waxlight for ${target === "windows" ? "Windows" : "Linux"}`;
+  if (selected && button) button.href = selected.href;
+</script>
+
+<style>
+  .downloads {
+    margin: 46px auto 0;
+    max-width: 520px;
+    padding: 30px;
+    border: 1px solid #2c292d;
+    border-radius: 14px;
+    background: #141316;
+    text-align: center;
+  }
+  .eyebrow {
+    margin: 0;
+    color: #e5a84b;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.22em;
+  }
+  h2 {
+    margin: 8px 0;
+    font-family: var(--font-display);
+    font-size: 28px;
+    font-weight: 600;
+  }
+  p:not(.eyebrow) {
+    margin: 0;
+    color: #999590;
+    font-size: 14px;
+  }
+  .download-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 21px;
+  }
+  .download-primary,
+  summary,
+  .other-downloads a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 43px;
+    border-radius: 9px;
+    font-size: 13px;
+    font-weight: 800;
+    text-decoration: none;
+  }
+  .download-primary {
+    color: #20150b;
+    background: linear-gradient(135deg, #efb557, #cf8732);
+    box-shadow: 0 8px 22px #c9802522;
+  }
+  .download-primary:hover {
+    filter: brightness(1.08);
+    transform: translateY(-1px);
+  }
+  details {
+    border: 1px solid #393539;
+    border-radius: 9px;
+    background: #1a181c;
+  }
+  summary {
+    justify-content: center;
+    cursor: pointer;
+    color: #d9d3cc;
+    list-style: none;
+  }
+  summary::-webkit-details-marker {
+    display: none;
+  }
+  .other-downloads {
+    display: grid;
+    gap: 1px;
+    padding: 0 8px 8px;
+  }
+  .other-downloads a {
+    justify-content: flex-start;
+    min-height: 35px;
+    padding: 0 10px;
+    color: #bdb7b1;
+  }
+  .other-downloads a:hover {
+    color: #fff;
+    background: #ffffff0b;
+  }
+  .release-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 20px;
+    color: #c49c63;
+    font-size: 13px;
+  }
+</style>
