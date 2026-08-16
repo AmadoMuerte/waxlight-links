@@ -109,6 +109,7 @@ const description = valid
   }
   .mod-card,
   .invalid {
+    position: relative;
     margin-top: 64px;
     padding: clamp(24px, 5vw, 36px);
     border: 1px solid #302d31;
@@ -117,15 +118,15 @@ const description = valid
     box-shadow: 0 18px 44px #0003;
   }
   .mod-heading {
-    display: grid;
-    grid-template-columns: 72px minmax(0, 1fr);
-    gap: 20px;
-    align-items: center;
+    padding-right: 92px;
   }
   .artwork {
     display: grid;
-    width: 72px;
-    height: 72px;
+    position: absolute;
+    top: 36px;
+    right: 36px;
+    width: 58px;
+    height: 58px;
     place-items: center;
     overflow: hidden;
     border: 1px solid #604326;
@@ -146,12 +147,13 @@ const description = valid
     letter-spacing: 0.22em;
   }
   h1 {
-    margin: 5px 0 2px;
+    margin: 8px 0 4px;
     overflow-wrap: anywhere;
-    font-family: var(--font-display);
-    font-size: clamp(34px, 5vw, 48px);
-    font-weight: 600;
-    line-height: 1;
+    font-family: var(--font-sans);
+    font-size: clamp(26px, 3.5vw, 32px);
+    font-weight: 750;
+    letter-spacing: -0.035em;
+    line-height: 1.15;
   }
   .author {
     margin: 0;
@@ -162,8 +164,7 @@ const description = valid
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
-    grid-column: 1 / -1;
-    margin: 22px 0 0;
+    margin: 18px 0 0;
     color: #a8a09a;
     font-size: 12px;
   }
@@ -177,7 +178,9 @@ const description = valid
     display: flex;
     align-items: center;
     gap: 14px;
-    margin-top: 26px;
+    margin-top: 24px;
+    padding-top: 24px;
+    border-top: 1px solid #302d31;
   }
   .open {
     display: inline-flex;
@@ -240,6 +243,15 @@ const description = valid
   @media (max-width: 600px) {
     .mod-card {
       margin-top: 46px;
+    }
+    .mod-heading {
+      padding-right: 62px;
+    }
+    .artwork {
+      top: 24px;
+      right: 24px;
+      width: 46px;
+      height: 46px;
     }
     .action {
       align-items: stretch;
