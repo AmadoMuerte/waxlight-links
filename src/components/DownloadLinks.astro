@@ -13,10 +13,7 @@ const linux = assets.find((asset) => asset.platform === "linux" && asset.primary
 const primary = windows || linux;
 ---
 
-<section class="downloads" aria-labelledby="download-heading">
-  <p class="eyebrow">GET WAXLIGHT</p>
-  <h2 id="download-heading">Don't have Waxlight?</h2>
-  <p>Download the launcher from its official GitHub releases.</p>
+<section class="downloads" aria-label="Download Waxlight">
   <div class="download-actions" data-downloads>
     <a class="download-primary" href={primary?.url || latestUrl} data-platform-download>
       <Download size={18} aria-hidden="true" />
@@ -40,7 +37,7 @@ const primary = windows || linux;
     }
   </div>
   <a class="release-link" href={latestUrl}>
-    View all releases <ExternalLink size={14} aria-hidden="true" />
+    View all releases <ExternalLink size={13} aria-hidden="true" />
   </a>
 </section>
 
@@ -59,37 +56,14 @@ const primary = windows || linux;
 
 <style>
   .downloads {
-    margin: 46px auto 0;
-    max-width: 520px;
-    padding: 30px;
-    border: 1px solid #2c292d;
-    border-radius: 14px;
-    background: #141316;
-    text-align: center;
-  }
-  .eyebrow {
-    margin: 0;
-    color: #e5a84b;
-    font-size: 10px;
-    font-weight: 800;
-    letter-spacing: 0.22em;
-  }
-  h2 {
-    margin: 8px 0;
-    font-family: var(--font-display);
-    font-size: 28px;
-    font-weight: 600;
-  }
-  p:not(.eyebrow) {
-    margin: 0;
-    color: #999590;
-    font-size: 14px;
+    margin-top: 28px;
   }
   .download-actions {
     display: flex;
-    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
     gap: 10px;
-    margin-top: 21px;
+    margin: 0;
   }
   .download-primary,
   summary,
@@ -105,6 +79,7 @@ const primary = windows || linux;
     text-decoration: none;
   }
   .download-primary {
+    padding: 0 18px;
     color: #20150b;
     background: linear-gradient(135deg, #efb557, #cf8732);
     box-shadow: 0 8px 22px #c9802522;
@@ -114,6 +89,8 @@ const primary = windows || linux;
     transform: translateY(-1px);
   }
   details {
+    position: relative;
+    min-width: 165px;
     border: 1px solid #393539;
     border-radius: 9px;
     background: #1a181c;
@@ -128,9 +105,18 @@ const primary = windows || linux;
     display: none;
   }
   .other-downloads {
+    position: absolute;
+    z-index: 1;
+    top: calc(100% + 7px);
+    right: 0;
     display: grid;
     gap: 1px;
-    padding: 0 8px 8px;
+    width: 245px;
+    padding: 8px;
+    border: 1px solid #393539;
+    border-radius: 9px;
+    background: #1a181c;
+    box-shadow: 0 16px 36px #0008;
   }
   .other-downloads a {
     justify-content: flex-start;
@@ -146,8 +132,23 @@ const primary = windows || linux;
     display: inline-flex;
     align-items: center;
     gap: 5px;
-    margin-top: 20px;
+    margin-top: 14px;
     color: #c49c63;
-    font-size: 13px;
+    font-size: 12px;
+  }
+  @media (max-width: 620px) {
+    .download-actions {
+      align-items: stretch;
+      flex-direction: column;
+      max-width: 320px;
+      margin: 0 auto;
+    }
+    .other-downloads {
+      position: static;
+      width: auto;
+      margin: 0 7px 7px;
+      border: 0;
+      box-shadow: none;
+    }
   }
 </style>
