@@ -1,5 +1,5 @@
 ---
-import { BookOpen, SquareCode } from "@lucide/astro";
+import { BookOpen, Globe2, SquareCode } from "@lucide/astro";
 import Brand from "../components/Brand.astro";
 import DownloadLinks from "../components/DownloadLinks.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
@@ -25,6 +25,9 @@ const downloads = await getDownloads();
         >
         <a href="https://amadomuerte.github.io/waxlight-wiki/en/"
           ><BookOpen size={16} aria-hidden="true" /> Docs</a
+        >
+        <a href="https://amadomuerte.ru"
+          ><Globe2 size={16} aria-hidden="true" /> Website</a
         >
       </nav>
     </section>
